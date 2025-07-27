@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login</title>
+  <link rel="stylesheet" href="/static/css/styles.css"/>
+</head>
+<body>
+  <div class="container login">
+  <h1>Login</h1>
+  <form id="login-form">
+    <div class="form-group">
+      <input type="text" id="username" placeholder="Usuário" required />
+      <input type="password" id="password" placeholder="Senha" required />
+    </div>
+    <div class="form-actions">
+      <button type="submit">Entrar</button>
+    </div>
+  </form>
+  <p class="register-link">Não tem conta? <a href="/register/">Criar conta</a></p>
+  <div id="login-status"></div>
+</div>
+
+  <script>
+    const loginForm = document.getElementById("login-form");
+    const loginStatus = document.getElementById("login-status");
+
+    loginForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      try {
+        const response = await fetch("/user/login/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          localStorage.setItem("token", data.access);
+          loginStatus.textContent = "Login realizado com sucesso!";
+          window.location.href = "/";
+        } else {
+          loginStatus.textContent = "Usuário ou senha inválidos.";
+        }
+      } catch (err) {
+        loginStatus.textContent = "Erro na tentativa de login.";
+      }
+    });
+  </script>
+</body>
+</html>

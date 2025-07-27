@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora Avançada</title>
+  <link rel="stylesheet" href="/static/css/styles.css" />
+</head>
+
+<body>
+  <div class="app">
+    <div class="calculadora">
+      <h1>Calculadora Avançada</h1>
+      <p class="subtitulo">Calculadora com histórico de operações</p>
+      <div class="display" id="display">0</div>
+      <div class="botoes">
+        <button class="btn vermelho">C</button>
+        <button class="btn">±</button>
+        <button class="btn">%</button>
+        <button class="btn roxo">÷</button>
+        <button class="btn">7</button>
+        <button class="btn">8</button>
+        <button class="btn">9</button>
+        <button class="btn roxo">×</button>
+        <button class="btn">4</button>
+        <button class="btn">5</button>
+        <button class="btn">6</button>
+        <button class="btn roxo">−</button>
+        <button class="btn">1</button>
+        <button class="btn">2</button>
+        <button class="btn">3</button>
+        <button class="btn roxo">+</button>
+        <button class="btn col-2">0</button>
+        <button class="btn">.</button>
+        <button class="btn azul" id="btn-equals">=</button>
+      </div>
+    </div>
+    <div class="historico" id="historico">
+      <div class="historico-header">
+        <h2>🕐 Histórico</h2>
+        <button class="btn-lixeira" id="btn-clear-history" title="Limpar histórico">
+          <img src="https://img.icons8.com/?size=100&id=11654&format=png&color=000000" alt="Limpar histórico" />
+        </button>
+      </div>
+      <div id="historico-lista"></div>
+    </div>
+  </div>
+
+  <script>
+    let expression = "";
+    let foiCalculado = false;
+
+    const display = document.getElementById("display");
+    const buttons = document.querySelectorAll(".btn");
+    const token = localStorage.getItem("token");
+
+    if (!token) window.location.href = "/login/";
+
+    function updateDisplay() {
+      display.textContent = expression || "0";
+    }
+
+    buttons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const val = btn.textContent.trim();
+        const isNumero = /^[0-9.]$/.test(val);
+
+        if (foiCalculado && isNumero) {
+          expression = "";
+          foiCalculado = false;
+        }
+
+        if (val === "C") {
+          expression = "";
+          foiCalculado = false;
+        } else if (val === "=") {
+          calcularExpressao();
+          return;
+        } else if (val === "±") {
+          expression = expression.startsWith("-") ? expression.slice(1) : "-" + expression;
+        } else {
+          const map = {
+            "×": "*",
+            "x": "*",
+            "*": "*",
+            "÷": "/",
+            "/": "/",
+            "−": "-",
+            "+": "+",
+            "%": "%"
+          };
+
+          const converted = map[val] !== undefined ? map[val] : val;
+          const operadores = ["+", "-", "*", "/"];
+          const ultimoChar = expression.slice(-1);
+
+          if (foiCalculado && !isNumero) {
+            // Se apertou operador logo após =, continue a conta
+            foiCalculado = false;
+          }
+
+          if (operadores.includes(ultimoChar) && operadores.includes(converted)) {
+            expression = expression.slice(0, -1) + converted;
+          } else {
+            expression += converted;
+          }
+        }
+
+        updateDisplay();
+      });
+    });
+
+    async function calcularExpressao() {
+      const response = await fetch("/api/calculator/calculate/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify({ parameters: expression })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        expression = data.result.toString();
+        foiCalculado = true;
+        updateDisplay();
+        carregarHistorico();
+      } else {
+        display.textContent = "Erro";
+      }
+    }
+
+    async function carregarHistorico() {
+      const res = await fetch("/api/calculator/history/", {
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
+
+      const historico = await res.json();
+      const historicoLista = document.getElementById("historico-lista");
+      historicoLista.innerHTML = "";
+
+      historico.forEach(op => {
+        const div = document.createElement("div");
+        div.className = "registro";
+        div.innerHTML = `<p>${op.parameters}<br><strong>= ${op.result}</strong><br><small>${new Date(op.created_at).toLocaleTimeString()}</small></p>`;
+        historicoLista.appendChild(div);
+      });
+    }
+
+    carregarHistorico();
+
+    document.getElementById("btn-clear-history").addEventListener("click", async () => {
+      const confirmacao = confirm("Tem certeza que deseja apagar todo o histórico?");
+      if (!confirmacao) return;
+
+      const res = await fetch("/api/calculator/history/", {
+        method: "DELETE",
+        headers: {
+          "Authorization": "Bearer " + token
+        }
+      });
+
+      if (res.ok) {
+        carregarHistorico();
+      } else {
+        alert("Erro ao apagar histórico.");
+      }
+    });
+  </script>
+</body>
+
+</html>

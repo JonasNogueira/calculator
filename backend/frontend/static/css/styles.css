@@ -1,0 +1,214 @@
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(160deg, #1a002e, #491464);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.app {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem;
+}
+
+.calculadora {
+  background-color: #2e1b47;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 500px;
+}
+
+.calculadora h1 {
+  text-align: center;
+  margin-bottom: 0.25rem;
+}
+
+.subtitulo {
+  text-align: center;
+  font-size: 0.9rem;
+  color: #ccc;
+  margin-bottom: 1rem;
+}
+
+.display {
+  background-color: #131225;
+  padding: 1rem;
+  font-size: 2rem;
+  text-align: right;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.botoes {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+}
+
+.btn {
+  padding: 1rem;
+  background-color: #2c2f3f;
+  border: none;
+  color: white;
+  font-size: 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #3e4459;
+}
+
+.vermelho { background-color: #f44336; }
+.roxo { background-color: #a734ec; }
+.azul { background-color: #3970f5; }
+.col-2 { grid-column: span 2; }
+
+.historico {
+  background-color: #2e1b47;
+  border-radius: 12px;
+  padding: 1.5rem;
+  width: 300px;
+  max-height: 500px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.historico h2 {
+  margin-top: 0;
+}
+
+.registro {
+  background-color: #191837;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.registro strong {
+  font-size: 1.2rem;
+  display: block;
+  margin-top: 0.25rem;
+}
+
+/* Login */
+
+.container.login {
+  
+  background-color: white;
+  padding: 2rem;
+  border-radius: 10px;
+  width: 300px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  color: black;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.container.login form {
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.form-group input {
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.form-actions button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #3970f5;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.form-actions button:hover {
+  background-color: #2d5fd1;
+}
+
+.register-link {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.register-link a {
+  color: #3970f5;
+  text-decoration: none;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
+}
+
+.historico-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.btn-lixeira {
+  display: flex;
+  align-items: center;
+  background-color: #f44336;
+  border: none;
+  color: white;
+  padding: 0.2rem 0.3rem;
+  font-size: 1.1rem;
+  border-radius: 5px;
+}
+
+.btn-lixeira img {
+  width: 19px;
+  height: 19px;
+  transition: transform 0.2s ease;
+}
+
+.btn-lixeira:hover img {
+  transform: scale(1.1);
+}
+
+
+
+
+@media screen and (max-width: 800px) {
+  .app {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .calculadora,
+  .historico {
+    width: 90%;
+  }
+
+  .historico {
+    max-height: 250px;
+  }
+}

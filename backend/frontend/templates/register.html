@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cadastro</title>
+  <link rel="stylesheet" href="/static/css/styles.css"/>
+</head>
+<body>
+  <div class="container login">
+  <h1>Cadastro</h1>
+  <form id="register-form">
+    <div class="form-group">
+      <input type="text" id="username" placeholder="Usuário" required />
+      <input type="password" id="password" placeholder="Senha" required />
+    </div>
+    <div class="form-actions">
+      <button type="submit">Criar conta</button>
+    </div>
+  </form>
+  <div id="register-status"></div>
+  <p class="register-link">Já tem conta? <a href="/login/">Voltar para login</a></p>
+</div>
+
+
+  <script>
+    const form = document.getElementById("register-form");
+    const status = document.getElementById("register-status");
+
+    form.addEventListener("submit", async function (e) {
+      e.preventDefault();
+
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+
+      const response = await fetch("/user/register/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+      });
+
+      if (response.ok) {
+        status.textContent = "Conta criada com sucesso!";
+        status.style.color = "green";
+        setTimeout(() => window.location.href = "/login/", 1500);
+      } else {
+        const data = await response.json();
+        status.textContent = data?.detail || "Erro ao criar conta.";
+        status.style.color = "red";
+      }
+    });
+  </script>
+</body>
+</html>
